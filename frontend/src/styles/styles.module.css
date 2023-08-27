@@ -1,0 +1,50 @@
+.menu {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    width: 400px;
+    height: 500px;
+    background-color: deeppink;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.container > * {
+    font-family: sans-serif;
+    font-weight: 900;
+}
+
+.btn {
+    width: 200px;
+    height: 40px;
+    margin-top: 10px;
+    border: none;
+}
+
+.btn:hover {
+    background-color: rgb(213, 213, 213);
+    cursor: pointer;
+}
+
+.btn:active {
+    background-color: blueviolet;
+}
+
+.textField {
+    width: 180px;
+    height: 20px;
+    text-align: center;
+    box-sizing: border-box;
+    border: 1px solid black;
+}
+
+.textField:focus {
+    outline: none;
+}
