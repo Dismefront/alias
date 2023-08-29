@@ -1,10 +1,3 @@
-DROP TABLE IF EXISTS rooms;
-CREATE TABLE rooms (
-    id VARCHAR(255) PRIMARY KEY,
-    date_created TIMESTAMP
-);
-
-
 CREATE TABLE themes (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255)
@@ -18,3 +11,7 @@ CREATE TABLE words (
 
     FOREIGN KEY (theme_id) REFERENCES themes (id)
 );
+
+
+DROP TABLE IF EXISTS themes;
+DROP TABLE IF EXISTS words;

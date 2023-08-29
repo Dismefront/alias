@@ -1,12 +1,27 @@
-import { Request, Response } from 'express';
-import { pool } from '../database/db';
+import { WebSocket } from 'ws';
+
+export type roomCreationResult = {
+    id: string,
+    date_created: Date
+};
+
+export interface Players {
+    nickname: string,
+    ws: WebSocket
+};
+
+export interface RoomProps {
+    id: string,
+    date_created: Date,
+    in_game: Players[],
+};
+
+export const rooms = new Map<string, RoomProps>();
 
 async function createRoom(id: string) {
-    const newRoom = await pool.query(
-        'INSERT INTO rooms (id, date_created) values ($1, to_timestamp($2 / 1000.0)) RETURNING *',
-        [id, Date.now()]
-    )
-    console.log(newRoom.rows[0]);
+    const newRoom: RoomProps = { id, date_created: new Date(), in_game: [] };
+    rooms.set(id, newRoom);
+    return newRoom;
 }
 
 export default { createRoom };
