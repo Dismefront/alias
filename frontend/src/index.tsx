@@ -4,7 +4,7 @@ import './styles/global.css';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { Game } from './Game';
 
-export const API = 'http://192.168.0.109:3000';
+export const API = 'http://localhost:3000'; // localhost:3000 192.168.0.109:3000
 
 const router = createBrowserRouter([
     {

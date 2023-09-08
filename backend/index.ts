@@ -29,7 +29,7 @@ app.use('/create', (req: Request, res: Response, next: NextFunction) => {
     timestamps.set(user_ip, new Date());
     next();
 });
-
+ 
 app.get('/create', async (req: Request, res: Response) => {
     if (res.locals.error) {
         res.status(550).send(res.locals.error);
