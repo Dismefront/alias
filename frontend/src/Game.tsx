@@ -1,6 +1,7 @@
 import { useStore } from "effector-react"
 import { $store } from "./store"
 
+export const WSIP = 'ws://localhost:3000/game'; 
 
 export const Game: React.FC = () => {
 
@@ -8,7 +9,7 @@ export const Game: React.FC = () => {
 
     return (
         <div className="menu">
-            hello, {store?.nickname}
+            <h1>{ store?.lobby }</h1>
         </div>
     )
 }

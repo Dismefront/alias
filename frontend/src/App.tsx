@@ -2,22 +2,22 @@ import { Dispatch, FunctionComponent, SetStateAction, useRef, useState } from "r
 import styles from './styles/styles.module.css';
 
 import { API } from "./index";
-import { useNavigate } from "react-router-dom";
-import { $store, setNickname } from "./store";
+import { $store, setData } from "./store";
 import { useStore } from "effector-react";
+import { CreateRoomData } from "./apiTypes";
+import { useNavigate } from "react-router-dom";
 
-function applyNickname(name: string | undefined, 
+function applyData(data: string | undefined, errorMsg: string,
         updateErrorMessage: Dispatch<SetStateAction<string | undefined>>): boolean {
-    if (!name || name.trim() === "") {
-        updateErrorMessage('Please, enter your nickname');
+    if (!data || data.trim() === "") {
+        updateErrorMessage(errorMsg);
         return false;
     }
     updateErrorMessage('');
-    setNickname(name);
     return true;
 }
 
-async function handleCreate(updateErrorMessage: Dispatch<SetStateAction<string | undefined>>): Promise<boolean> {
+async function handleCreate(updateErrorMessage: Dispatch<SetStateAction<string | undefined>>): Promise<string | undefined> {
     const res = await fetch(`${API}/create`, {
         method: 'get'
     });
@@ -27,9 +27,12 @@ async function handleCreate(updateErrorMessage: Dispatch<SetStateAction<string |
         updateErrorMessage('An error occured');
     else {
         updateErrorMessage('');
-        return true;
+        const data = await res.json() as CreateRoomData;
+        if (!applyData(data.room_id, "Could not create lobby", updateErrorMessage))
+            return undefined;
+        return data.room_id;
     }
-    return false;
+    return undefined;
 }
 
 export const App: FunctionComponent = () => {
@@ -38,7 +41,6 @@ export const App: FunctionComponent = () => {
     const inpname = useRef<HTMLInputElement>(null);
     const [errorMessage, updateErrorMessage] = useState<string>();
     const navigate = useNavigate();
-    const store = useStore($store);
 
     return (
         <div className='menu'>
@@ -49,10 +51,17 @@ export const App: FunctionComponent = () => {
                     <button 
                         className={styles.btn}
                         onClick={async () => {
-                            if (!applyNickname(inpname?.current?.value, updateErrorMessage))
+                            const nickname = inpname?.current?.value;
+                            if (!applyData(
+                                    nickname, 
+                                    'Enter your nickname', 
+                                    updateErrorMessage
+                                ))
                                 return;
-                            if (await handleCreate(updateErrorMessage)) {
-                                navigate('/game');
+                            const room_id = await handleCreate(updateErrorMessage);
+                            if (room_id && nickname) {
+                                setData({ nickname: nickname, lobby: room_id });
+                                navigate(`/${room_id}`);
                             }
                     }}>New game</button>
                     <button 
