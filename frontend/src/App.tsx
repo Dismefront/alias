@@ -1,11 +1,11 @@
-import { Dispatch, FunctionComponent, SetStateAction, useRef, useState } from "react";
+import { Dispatch, FunctionComponent, SetStateAction, useEffect, useRef, useState } from "react";
 import styles from './styles/styles.module.css';
 
 import { API } from "./index";
 import { $store, setData } from "./store";
 import { useStore } from "effector-react";
 import { CreateRoomData } from "./apiTypes";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function applyData(data: string | undefined, errorMsg: string,
         updateErrorMessage: Dispatch<SetStateAction<string | undefined>>): boolean {
@@ -41,10 +41,15 @@ export const App: FunctionComponent = () => {
     const inpname = useRef<HTMLInputElement>(null);
     const [errorMessage, updateErrorMessage] = useState<string>();
     const navigate = useNavigate();
+    const location = useLocation();
+
+    let roomErrorMessage = location.state;
+    window.history.replaceState('', document.title);
 
     return (
         <div className='menu'>
             <div className={styles.container}>
+                <p className={styles.errormsg}>{ roomErrorMessage }</p>
                 <h1>alias</h1>
                 <div className={styles.interractive}>
                     <input type="text" ref={inpname} className={styles.textField} placeholder="nickname"/>
@@ -60,7 +65,7 @@ export const App: FunctionComponent = () => {
                                 return;
                             const room_id = await handleCreate(updateErrorMessage);
                             if (room_id && nickname) {
-                                setData({ nickname: nickname, lobby: room_id });
+                                setData({ nickname: nickname });
                                 navigate(`/${room_id}`);
                             }
                     }}>New game</button>
