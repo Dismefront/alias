@@ -1,4 +1,4 @@
-import { Dispatch, FunctionComponent, SetStateAction, useEffect, useRef, useState } from "react";
+import { Dispatch, FunctionComponent, SetStateAction, useEffect, useLayoutEffect, useRef, useState } from "react";
 import styles from './styles/styles.module.css';
 
 import { API } from "./index";
@@ -56,7 +56,8 @@ export const App: FunctionComponent = () => {
                     <button 
                         className={styles.btn}
                         onClick={async () => {
-                            const nickname = inpname?.current?.value;
+                            let nickname = inpname?.current?.value;
+                            nickname = 'test';
                             if (!applyData(
                                     nickname, 
                                     'Enter your nickname', 
@@ -73,7 +74,19 @@ export const App: FunctionComponent = () => {
                         onClick={() => {
                             if (!inplink.current)
                                 return;
-                            console.log(inplink.current.value);
+                            let nickname = inpname?.current?.value;
+                            nickname = 'test2';
+                            if (!applyData(
+                                    nickname, 
+                                    'Enter your nickname', 
+                                    updateErrorMessage
+                                ))
+                                return;
+                            const room_id = inplink.current.value;
+                            if (nickname) {
+                                setData({ nickname: nickname });
+                                navigate(`/${room_id}`);
+                            }
                         }}
                         className={styles.btn}
                     >Join Game</button>

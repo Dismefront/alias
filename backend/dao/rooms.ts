@@ -5,15 +5,15 @@ export type roomCreationResult = {
     date_created: Date
 };
 
-export interface Players {
-    nickname: string,
+export interface Player {
+    nickname: string | undefined,
     ws: WebSocket
 };
 
 export interface RoomProps {
     id: string,
     date_created: Date,
-    in_game: Players[],
+    in_game: Player[],
 };
 
 export const rooms = new Map<string, RoomProps>();
