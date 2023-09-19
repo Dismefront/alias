@@ -2,6 +2,7 @@ import http from 'http';
 import { WebSocket, WebSocketServer } from 'ws';
 import express, { Request, Response } from 'express';
 import { rooms } from './dao/rooms';
+import { updateRelevantConnections } from './masslogic';
 
 export const gameRoute = express.Router();
 
@@ -24,7 +25,8 @@ export function handleWSS(server: http.Server) {
 
         ws.on('close', () => {
             console.log(`A user disconnected from ${room_id}: ${req.socket.remoteAddress}`);
-            room.in_game = room.in_game.filter(x => x.ws === ws);
+            room.in_game = room.in_game.filter(x => x.ws !== ws);
+            updateRelevantConnections(room.in_game);
         });
 
         ws.on('message', (message) => {
@@ -36,7 +38,7 @@ export function handleWSS(server: http.Server) {
                             x.nickname = data.payload.nickname;
                         return x;
                     });
-                    room.in_game.forEach(x => x.ws.send(JSON.stringify(room.in_game.map(x => x.nickname))))
+                    updateRelevantConnections(room.in_game);
                     break; 
             }
         })

@@ -1,0 +1,18 @@
+.banner {
+    position: absolute;
+    top: 10px;
+}
+
+.container {
+    padding: 10px;
+    background-color: bisque;
+    border-radius: 5px;
+    cursor: pointer;
+    user-select: none;
+    transition: ease-out 0.2s;
+}
+
+.container:hover {
+    background-color: rgb(235, 194, 144);
+
+}

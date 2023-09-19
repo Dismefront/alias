@@ -5,10 +5,12 @@ import { useEffect, useState } from "react";
 import useWebSocket from "react-use-websocket";
 import { WSIP } from "./index";
 import styles from './styles/game.module.css';
+import { Banner } from "./components/banner";
 
 const roomRegEx = /^\/[\d+\w+-]+\/*$/i;
 
 export interface Player {
+    id: number,
     nickname: string,
     teamNO: number
 }
@@ -47,17 +49,16 @@ export const Game: React.FC = () => {
             websocket.sendJsonMessage(message);
         },
         onMessage: (message) => {
-            let data: string[] = JSON.parse(message.data);
-            updatePlayers(data.map(x => ({ nickname: x, teamNO: 1 })))
+            console.log(message.data);
+            let data: Player[] = JSON.parse(message.data);
+            updatePlayers(data.map(x => ({ id: x.id, nickname: x.nickname, teamNO: x.teamNO })))
         }
     });
 
     return (
         <div className="menu">
-            <div className={styles.tmp}>
-                <h1>{ window.location.pathname }</h1>
+                <Banner text={ window.location.pathname.slice(1) } />
                 <h2>{ players?.map(x => x.nickname + " ") }</h2>
-            </div>
         </div>
     )
 }
