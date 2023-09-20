@@ -14,5 +14,9 @@
 
 .container:hover {
     background-color: rgb(235, 194, 144);
+}
 
+.description {
+    display: flex;
+    justify-content: center;
 }
