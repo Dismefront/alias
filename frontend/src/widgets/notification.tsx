@@ -10,6 +10,9 @@ export type MouseState = {
     pressed: boolean
 }
 
+const absoluteRightPos = 15;
+const toBeRemovedOffset = 200;
+
 export const Notification: React.FC<NotificationProps> = ({ text }) => {
 
     const [mouseState, updateMouseState] = useState<MouseState>({ xStarting: 0, pressed: false });
@@ -27,12 +30,16 @@ export const Notification: React.FC<NotificationProps> = ({ text }) => {
         }
     }, []);
 
-    return (<div className={`${styles.notification} ${isRemoved ? styles.remove: ''}`} style={{right: `${offset + 15}px`}}> 
+    return (<div className={`${styles.notification} ${isRemoved ? styles.remove: ''}`} 
+            style={{right: `${offset + 15}px`, opacity: `${1 - Math.abs(offset / toBeRemovedOffset)}`}}> 
         <div className={styles.container} onMouseMove={(event: MouseEvent) => {
             if (!mouseState.pressed)
                 return;
-            udpateOffset(mouseState.xStarting - event.clientX);
+            let offs = mouseState.xStarting - event.clientX;
+            udpateOffset(offs);
             updateMouseState({ ...mouseState });
+            if (Math.abs(offs) >= toBeRemovedOffset)
+                removeNotification(true);
         }}
         onMouseDown={(event: MouseEvent) => updateMouseState({ ...mouseState, pressed: true, xStarting: event.clientX })}
         >
