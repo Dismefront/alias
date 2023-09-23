@@ -10,6 +10,7 @@
     cursor: pointer;
     user-select: none;
     transition: ease-out 0.2s;
+    text-align: center;
 }
 
 .container:hover {

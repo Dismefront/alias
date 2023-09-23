@@ -4,17 +4,28 @@
     right: 15px;
 }
 
+.remove {
+    display: none;
+}
+
 .container {
     position: relative;
-    background-color: rgba(25, 149, 6, 0.65);
+    background-color: rgba(25, 149, 6, 0.6);
     color: white;
     padding: 0 100px 0 100px;
+    min-width: max-content;
     border-radius: 10px;
     font-weight: 600;
     height: 50px;
     font-family: sans-serif;
     display: flex;
     align-items: center;
+    user-select: none;
+    cursor: grab;
+}
+
+.container:active {
+    cursor: grabbing;
 }
 
 .closeButton {
@@ -36,11 +47,16 @@
     transition: linear 0.1s;
 }
 
+.closeButton:active {
+    cursor: default;
+}
+
 .closeButton:hover {
-    opacity: 1;
+    opacity: 0.9;
 }
 
 .icon {
-    font-size: 14px;
-    font-weight: 1000;
+    padding-bottom: 3px;
+    font-size: 16px;
+    font-weight: 900;
 }

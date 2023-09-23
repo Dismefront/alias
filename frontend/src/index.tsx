@@ -4,7 +4,7 @@ import './styles/global.css';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { Game } from './Game';
 
-export const IP = '192.168.0.109:3000'
+export const IP = '192.168.0.107:3000'
 export const API = 'http://' + IP; // localhost:3000 192.168.0.109:3000
 export const WSIP = 'ws://' + IP;
 

@@ -12,8 +12,7 @@
 }
 
 .container * {
-    font-family: sans-serif;
-    font-weight: 900;
+    font-weight: 500;
 }
 
 .btn {
@@ -45,9 +44,10 @@
 }
 
 .errormsg {
-    font-size: 12px;
+    font-size: 14px;
     color: rgb(255, 0, 0);
-    font-weight: 300;
+    font-weight: 500;
+    background-color: yellow;
 }
 
 .interractive {

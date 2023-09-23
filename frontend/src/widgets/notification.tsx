@@ -1,13 +1,47 @@
+import { MouseEvent, useEffect, useRef, useState } from 'react';
 import styles from './notification.module.css';
 
 export interface NotificationProps {
     text: string
 };
 
+export type MouseState = {
+    xStarting: number,
+    pressed: boolean
+}
+
 export const Notification: React.FC<NotificationProps> = ({ text }) => {
-    return (<div className={styles.notification}>
-        <div className={styles.container}>
-            <button className={styles.closeButton}><dd className={styles.icon}>x</dd></button>
+
+    const [mouseState, updateMouseState] = useState<MouseState>({ xStarting: 0, pressed: false });
+    const [offset, udpateOffset] = useState<number>(0);
+    const [isRemoved, removeNotification] = useState<boolean>(false);
+
+    useEffect(() => {
+        const handleMouseUp = () => {
+            updateMouseState({ ...mouseState, pressed: false });
+            udpateOffset(0);
+        }
+        addEventListener('mouseup', handleMouseUp);
+        return () => {
+            removeEventListener('mouseup', handleMouseUp);
+        }
+    }, []);
+
+    return (<div className={`${styles.notification} ${isRemoved ? styles.remove: ''}`} style={{right: `${offset + 15}px`}}> 
+        <div className={styles.container} onMouseMove={(event: MouseEvent) => {
+            if (!mouseState.pressed)
+                return;
+            udpateOffset(mouseState.xStarting - event.clientX);
+            updateMouseState({ ...mouseState });
+        }}
+        onMouseDown={(event: MouseEvent) => updateMouseState({ ...mouseState, pressed: true, xStarting: event.clientX })}
+        >
+            <button 
+            className={styles.closeButton} 
+            onMouseDown={ (event: MouseEvent) => event.stopPropagation()}
+            onClick={ (event: MouseEvent) => {removeNotification(true)} }>
+                <dd className={styles.icon}>x</dd>
+            </button>
             <dd>{ text }</dd>
         </div>
     </div>)
