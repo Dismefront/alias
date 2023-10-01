@@ -2,7 +2,7 @@ import { Dispatch, FunctionComponent, SetStateAction, useEffect, useLayoutEffect
 import styles from './styles/styles.module.css';
 
 import { API } from "./index";
-import { $store, setData } from "./store";
+import { setData } from "./store";
 import { useStore } from "effector-react";
 import { CreateRoomData } from "./apiTypes";
 import { useLocation, useNavigate } from "react-router-dom";

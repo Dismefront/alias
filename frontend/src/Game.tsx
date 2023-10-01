@@ -1,10 +1,9 @@
 import { useStore } from "effector-react"
-import { $store } from "./store"
+import { $gameStore } from "./store"
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import useWebSocket from "react-use-websocket";
 import { WSIP } from "./index";
-import styles from './styles/game.module.css';
 import { Banner } from "./components/banner";
 
 const roomRegEx = /^\/[\d+\w+-]+\/*$/i;
@@ -22,7 +21,7 @@ export interface JSONMessage {
 
 export const Game: React.FC = () => {
 
-    const store = useStore($store);
+    const store = useStore($gameStore);
     const room_id = window.location.pathname;
     const navigate = useNavigate();
 

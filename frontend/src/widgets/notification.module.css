@@ -1,15 +1,47 @@
 .notification {
     position: fixed;
-    top: 15px;
     right: 15px;
+    animation-name: popup;
+    animation-duration: 0.5s;
+    transition-property: top;
+    transition-duration: 0.5s;
+}
+
+.popout {
+    animation-fill-mode: forwards;
+    animation-name: popout;
+    animation-duration: 1s;
+    opacity: 0;
+}
+
+@keyframes popup {
+    from {
+        top: -50px;
+        opacity: 0;
+    }
+
+    to {
+        top: 15px;
+        opacity: 1;
+    }
+}
+
+@keyframes popout {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
 }
 
 .remove {
+    opacity: 0;
     display: none;
 }
 
 .container {
-    position: relative;
     background-color: rgba(25, 149, 6, 0.6);
     color: white;
     padding: 0 100px 0 100px;
