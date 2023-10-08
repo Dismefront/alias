@@ -1,10 +1,9 @@
-import { Dispatch, FunctionComponent, SetStateAction, useEffect, useLayoutEffect, useRef, useState } from "react";
-import styles from './styles/styles.module.css';
+import { Dispatch, FunctionComponent, SetStateAction, useRef, useState } from "react";
+import styles from '../styles/styles.module.css';
 
-import { API } from "./index";
-import { setData } from "./store";
-import { useStore } from "effector-react";
-import { CreateRoomData } from "./apiTypes";
+import { API } from "../index";
+import { setData } from "../store";
+import { CreateRoomData } from "../apiTypes";
 import { useLocation, useNavigate } from "react-router-dom";
 
 function applyData(data: string | undefined, errorMsg: string,
@@ -57,7 +56,6 @@ export const App: FunctionComponent = () => {
                         className={styles.btn}
                         onClick={async () => {
                             let nickname = inpname?.current?.value;
-                            nickname = 'test';
                             if (!applyData(
                                     nickname, 
                                     'Enter your nickname', 
@@ -75,7 +73,6 @@ export const App: FunctionComponent = () => {
                             if (!inplink.current)
                                 return;
                             let nickname = inpname?.current?.value;
-                            nickname = 'test2';
                             if (!applyData(
                                     nickname, 
                                     'Enter your nickname', 
