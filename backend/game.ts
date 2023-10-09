@@ -3,13 +3,18 @@ import { WebSocket, WebSocketServer } from 'ws';
 import express, { Request, Response } from 'express';
 import { rooms } from './dao/rooms';
 import { updateRelevantConnections } from './masslogic';
+import internal from 'stream';
 
 export const gameRoute = express.Router();
 
-export interface JSONMessage {
+export interface JSONMessageNickname {
     type: 'nickname',
-    payload: any
+    payload: {
+        nickname: string | undefined
+    }
 }
+
+export type MessageData = JSONMessageNickname;
 
 export function handleWSS(server: http.Server) {
 
@@ -30,7 +35,7 @@ export function handleWSS(server: http.Server) {
         });
 
         ws.on('message', (message) => {
-            const data: JSONMessage = JSON.parse(message.toString());
+            const data: MessageData = JSON.parse(message.toString());
             switch (data.type) {
                 case 'nickname':
                     room.in_game = room.in_game.map((x) => {
@@ -39,15 +44,16 @@ export function handleWSS(server: http.Server) {
                         return x;
                     });
                     updateRelevantConnections(room.in_game);
-                    break; 
+                    break;
             }
         })
     });
 
-    server.on('upgrade', (req: Request, socket, head) => {
+    server.on('upgrade', (req: Request, socket: internal.Duplex, head) => {
         const regex: RegExp = /^\/[\d+\w+-]+\/*$/i;
         const match = req.url.match(regex);
-        if (match) {
+
+        if (match && req.headers.upgrade?.toLocaleLowerCase() === 'websocket') {
             const room_id = match[0].slice(1);
             console.log("\tEstablishing connection on: " + room_id);
             if (!rooms.has(room_id)) {

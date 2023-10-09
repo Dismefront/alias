@@ -3,7 +3,7 @@ import http from 'http';
 import cors from 'cors';
 
 const port = 3000;
-const IP = '192.168.0.107';
+const IP = 'localhost';
 const app: Express = express();
 const server: http.Server = http.createServer(app);
 
@@ -36,8 +36,8 @@ app.get('/create', async (req: Request, res: Response) => {
         return;
     }
     const id = generateID({ 
-        sections: 2,
-        symbolCnt: 2
+        sections: 3,
+        symbolCnt: 5
     });
     await roomsDAO.createRoom(id);
     res.status(200).json({
