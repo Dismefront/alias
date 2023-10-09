@@ -1,5 +1,5 @@
 import { Dispatch, FunctionComponent, SetStateAction, useRef, useState } from "react";
-import styles from '../styles/styles.module.css';
+import styles from './app.module.css';
 
 import { API } from "../index";
 import { setData } from "../store";

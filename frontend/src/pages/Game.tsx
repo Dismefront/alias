@@ -5,8 +5,9 @@ import { useEffect, useState } from "react";
 import useWebSocket from "react-use-websocket";
 import { WSIP } from "../index";
 import { Banner } from "../components/banner/banner";
-import styles from '../styles/game.module.css';
-import { Team } from "../components/team/Team";
+import styles from './game.module.css';
+import { Team, TeamThemes } from "../components/team/Team";
+import { TeamAdd } from "../components/team/TeamAdd";
 
 const roomRegEx = /^\/[\d+\w+-]+\/*$/i;
 
@@ -22,14 +23,26 @@ export interface PlayerData {
 }
 
 export interface GetDataPlayersUpdate {
-    players: Player[],
-    ownID: number
+    type: 'players',
+    payload: {
+        players: Player[],
+        ownID: number
+    }
 }
 
-export interface JSONMessage {
-    type: 'nickname',
-    payload: any
+export interface GetDataShit {
+    type: 'shit',
+    data: string
 }
+
+export interface JSONMessageNickname {
+    type: 'nickname',
+    payload: {
+        nickname: string | undefined
+    }
+}
+
+export type MessageInfo = GetDataPlayersUpdate | JSONMessageNickname;
 
 const enum Teams {
     SPECTATORS = -1
@@ -46,8 +59,9 @@ export const Game: React.FC = () => {
     useEffect(() => {
         if (!roomRegEx.test(room_id))
             navigate('/', { state: 'The room does not exist' });
-        else if (!store?.nickname)
+        else if (!store?.nickname) {
             navigate('/', { state: 'Could not let you with invalid nickname' });
+        }
     }, []);
 
     const websocket = useWebSocket(WSIP + room_id, {
@@ -55,7 +69,7 @@ export const Game: React.FC = () => {
             navigate('/', { state: 'The room you provided does not exist' })
         },
         onOpen: () => {
-            let message: JSONMessage = {
+            let message: MessageInfo = {
                 type: 'nickname',
                 payload: {
                     nickname: store?.nickname
@@ -64,11 +78,16 @@ export const Game: React.FC = () => {
             websocket.sendJsonMessage(message);
         },
         onMessage: (message) => {
-            let data: GetDataPlayersUpdate = JSON.parse(message.data);
-            updatePlayers({ 
-                players: data.players.map(x => ({ id: x.id, nickname: x.nickname, teamNO: x.teamNO })), 
-                ownID: data.ownID
-            })
+            let got: MessageInfo = JSON.parse(message.data);
+            switch(got.type) {
+                case 'players':
+                    let data = got.payload;
+                    updatePlayers({ 
+                        players: data.players.map(x => ({ id: x.id, nickname: x.nickname, teamNO: x.teamNO })), 
+                        ownID: data.ownID
+                    })
+                    break;
+            }
         }
     });
 
@@ -77,7 +96,16 @@ export const Game: React.FC = () => {
     return (
         <div className={ styles.menu }>
                 <Banner text={ window.location.pathname.slice(1) } />
-                <Team name='Spectators' members={ specs } me={ players?.ownID }/>
+                <div>
+                    <Team name='Spectators' members={ specs } me={ players?.ownID }/>
+                </div>
+                <div className={ styles.availableTeams }>
+                    <Team name='skuf team' 
+                        members={ specs } 
+                        me={ players?.ownID } 
+                        theme={ TeamThemes.TEAM }/>
+                    <TeamAdd />
+                </div>
         </div>
     )
 }
