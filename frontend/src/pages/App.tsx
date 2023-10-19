@@ -1,10 +1,11 @@
-import { Dispatch, FunctionComponent, SetStateAction, useRef, useState } from "react";
+import { Dispatch, FunctionComponent, SetStateAction, useEffect, useRef, useState } from "react";
 import styles from './app.module.css';
 
 import { API } from "../index";
 import { setData } from "../store";
 import { CreateRoomData } from "../apiTypes";
 import { useLocation, useNavigate } from "react-router-dom";
+import { getRandNickname } from "../shared/nicknames";
 
 function applyData(data: string | undefined, errorMsg: string,
         updateErrorMessage: Dispatch<SetStateAction<string | undefined>>): boolean {
@@ -37,7 +38,7 @@ async function handleCreate(updateErrorMessage: Dispatch<SetStateAction<string |
 export const App: FunctionComponent = () => {
 
     const inplink = useRef<HTMLInputElement>(null);
-    const inpname = useRef<HTMLInputElement>(null);
+    const [inpname, changeInpName] = useState<string>(getRandNickname());
     const [errorMessage, updateErrorMessage] = useState<string>();
     const navigate = useNavigate();
     const location = useLocation();
@@ -51,20 +52,23 @@ export const App: FunctionComponent = () => {
                 <p className={styles.errormsg}>{ roomErrorMessage }</p>
                 <h1>alias</h1>
                 <div className={styles.interractive}>
-                    <input type="text" ref={inpname} className={styles.textField} placeholder="nickname"/>
+                    <input type="text" 
+                        onChange={event => changeInpName(event.target.value)} 
+                        value={inpname} 
+                        className={styles.textField} 
+                        placeholder="nickname"/>
                     <button 
                         className={styles.btn}
                         onClick={async () => {
-                            let nickname = inpname?.current?.value;
                             if (!applyData(
-                                    nickname, 
+                                    inpname, 
                                     'Enter your nickname', 
                                     updateErrorMessage
                                 ))
                                 return;
                             const room_id = await handleCreate(updateErrorMessage);
-                            if (room_id && nickname) {
-                                setData({ nickname: nickname });
+                            if (room_id && inpname) {
+                                setData({ nickname: inpname });
                                 navigate(`/${room_id}`);
                             }
                     }}>New game</button>
@@ -72,16 +76,15 @@ export const App: FunctionComponent = () => {
                         onClick={() => {
                             if (!inplink.current)
                                 return;
-                            let nickname = inpname?.current?.value;
                             if (!applyData(
-                                    nickname, 
+                                    inpname, 
                                     'Enter your nickname', 
                                     updateErrorMessage
                                 ))
                                 return;
                             const room_id = inplink.current.value;
-                            if (nickname) {
-                                setData({ nickname: nickname });
+                            if (inpname) {
+                                setData({ nickname: inpname });
                                 navigate(`/${room_id}`);
                             }
                         }}

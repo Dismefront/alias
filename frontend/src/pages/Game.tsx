@@ -1,7 +1,7 @@
 import { useStore } from "effector-react"
-import { $gameStore } from "../store"
+import { $gameStore, setData } from "../store"
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import useWebSocket from "react-use-websocket";
 import { WSIP } from "../index";
 import { Banner } from "../components/banner/banner";
@@ -55,18 +55,30 @@ export const Game: React.FC = () => {
     const navigate = useNavigate();
 
     const [ players, updatePlayers ] = useState<PlayerData>();
+    const navigateCalled = useRef<boolean>(false);
 
     useEffect(() => {
-        if (!roomRegEx.test(room_id))
-            navigate('/', { state: 'The room does not exist' });
+        if (!roomRegEx.test(room_id)) {
+            navigate('/', { state: 'The room id contains inappropriate symbols' });
+            navigateCalled.current = true;
+        }
         else if (!store?.nickname) {
+            let pr = prompt('Enter your nickname');
+            if (pr && pr.trim()) {
+                setData({ nickname: pr });
+                return;
+            }
             navigate('/', { state: 'Could not let you with invalid nickname' });
+            navigateCalled.current = true;
         }
     }, []);
 
     const websocket = useWebSocket(WSIP + room_id, {
         onError: () => {
-            navigate('/', { state: 'The room you provided does not exist' })
+            console.log(navigateCalled.current);
+            if (!navigateCalled.current) {
+                navigate('/', { state: 'The room you provided does not exist' });
+            }
         },
         onOpen: () => {
             let message: MessageInfo = {
@@ -101,6 +113,10 @@ export const Game: React.FC = () => {
                 </div>
                 <div className={ styles.availableTeams }>
                     <Team name='skuf team' 
+                        members={ specs } 
+                        me={ players?.ownID } 
+                        theme={ TeamThemes.TEAM }/>
+                    <Team name='skuf team2' 
                         members={ specs } 
                         me={ players?.ownID } 
                         theme={ TeamThemes.TEAM }/>
