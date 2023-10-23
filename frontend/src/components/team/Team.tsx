@@ -1,5 +1,6 @@
-import { Player } from '../../pages/Game';
+import { Player } from '../../apiTypes';
 import { cutNickname } from '../../shared/nicknamecutter';
+import { JoinBtn } from './JoinBtn';
 import styles from './team.module.css';
 import { v4 as uuid4 } from 'uuid';
 
@@ -13,7 +14,7 @@ export enum TeamThemes {
 export interface TeamProps {
     me?: number,
     name: string,
-    members: Player[] | undefined,
+    members: Player[],
     theme?: TeamThemes
 }
 
@@ -36,6 +37,8 @@ export const Team: React.FC<TeamProps> = (props) => {
                         return (<li key={ `member-${uuid4()}` }>{ cutNickname(x.nickname) }</li>);
                     })
                     }
+                    { !props.members.find(x => x.id === props.me) ?
+                    <JoinBtn /> : undefined }
                 </ul>
             </div>
         </div>

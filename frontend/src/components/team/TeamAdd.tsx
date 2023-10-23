@@ -1,9 +1,9 @@
 import styles from './team.module.css';
 
-export const TeamAdd: React.FC = () => {
+export const TeamAdd: React.FC<React.ButtonHTMLAttributes<HTMLButtonElement>> = (props) => {
     return (
         <div className={ styles.AddBtnContainer }>
-            <button className={ styles.TeamAddButton }>+</button>
+            <button { ...props } className={ styles.TeamAddButton }>+</button>
         </div>
     );
 }
