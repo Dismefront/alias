@@ -2,7 +2,7 @@ import http from 'http';
 import { WebSocket, WebSocketServer } from 'ws';
 import express, { Request, Response } from 'express';
 import { rooms } from './dao/rooms';
-import { updateRelevantConnections } from './masslogic';
+import { addTeam, sendAllTeams, updateRelevantConnections } from './masslogic';
 import internal from 'stream';
 
 export const gameRoute = express.Router();
@@ -14,7 +14,27 @@ export interface JSONMessageNickname {
     }
 }
 
-export type MessageData = JSONMessageNickname;
+export interface JSONMessageSwitchTeam {
+    type: 'roomswitch',
+    payload: {
+        nickname: string,
+        from: number,
+        to: number
+    }
+}
+
+export interface JSONMessageAlterTeams {
+    type: 'alterteams',
+    payload: {
+        type: 'add'
+    } | {
+        type: 'delete'
+    }
+}
+
+export type MessageData = JSONMessageNickname | 
+    JSONMessageSwitchTeam |
+    JSONMessageAlterTeams;
 
 export function handleWSS(server: http.Server) {
 
@@ -27,6 +47,7 @@ export function handleWSS(server: http.Server) {
         if (!room)
             return;
         room.in_game.push({ ws: ws, nickname: undefined });
+        sendAllTeams(room.in_game, room.teams);
 
         ws.on('close', () => {
             console.log(`A user disconnected from ${room_id}: ${req.socket.remoteAddress}`);
@@ -44,6 +65,11 @@ export function handleWSS(server: http.Server) {
                         return x;
                     });
                     updateRelevantConnections(room.in_game);
+                    break;
+                case 'alterteams':
+                    if (data.payload.type === 'add' && room.teams.length < 8) {
+                        addTeam(room.in_game, room.teams);
+                    }
                     break;
             }
         })

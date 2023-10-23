@@ -79,16 +79,9 @@ export const Game: React.FC = () => {
                     }
                     break;
                 case 'allteams':
-                    for (let i = 0; i < got.payload.length; i++) {
-                        let ok = false;
-                        for (let j = 0; j < teams.length; j++) {
-                            if (got.payload[i].id === teams[j].id)
-                                ok = true;
-                        }
-                        if (ok)
-                            continue;
-                        handleTeamAdd(teams, got.payload[i].id, got.payload[i].name, updateTeams, players);
-                    }
+                    got.payload.forEach(x => (
+                        handleTeamAdd(teams, x.id, x.name, updateTeams, players)
+                    ));
             }
         }
     });
