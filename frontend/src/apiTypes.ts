@@ -52,5 +52,14 @@ export interface JSONMessageAllTeams {
     }[]
 }
 
+export interface JSONMessagePlayerSwitchTeam {
+    type: 'playerswitchedteam',
+    payload: {
+        id: number,
+        from: number,
+        to: number
+    }
+}
+
 export type MessageInfo = GetDataPlayersUpdate | JSONMessageNickname | JSONMessageAlterTeams
-    | JSONMessageAllTeams;
+    | JSONMessageAllTeams | JSONMessagePlayerSwitchTeam;

@@ -1,4 +1,5 @@
 import { createEvent, createStore } from "effector"
+import { PlayerData } from "./apiTypes";
 
 export interface PlayerI {
     nickname: string
@@ -9,6 +10,7 @@ export interface NotificationI {
 }
 
 export const setData = createEvent<PlayerI>();
+export const updatePlayers = createEvent<PlayerData>();
 
 export const notificationAdd = createEvent<number>();
 export const notificationDelete = createEvent<NotificationI>();
@@ -19,6 +21,10 @@ export const $gameStore = createStore<PlayerI | null>(null)
         return { nickname: payload.nickname };
     });
 
+export const $playersStore = createStore<PlayerData>({ ownID: -1, players: [] })
+    .on(updatePlayers, (_, payload) => {
+        return payload;
+    })
 
 export const $notificationStore = createStore<NotificationI>({ ids: [] })
     .on(notificationAdd, (prev_data, payload) => {

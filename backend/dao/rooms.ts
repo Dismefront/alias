@@ -25,7 +25,12 @@ export interface RoomProps {
 export const rooms = new Map<string, RoomProps>();
 
 async function createRoom(id: string) {
-    const newRoom: RoomProps = { id, date_created: new Date(), in_game: [], teams: [] };
+    const newRoom: RoomProps = { id, date_created: new Date(), in_game: [], teams: [
+        {
+            inside: [],
+            name: 'Spectators'
+        }
+    ] };
     rooms.set(id, newRoom);
     return newRoom;
 }

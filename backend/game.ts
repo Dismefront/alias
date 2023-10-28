@@ -15,10 +15,8 @@ export interface JSONMessageNickname {
 }
 
 export interface JSONMessageSwitchTeam {
-    type: 'roomswitch',
+    type: 'playerteamswitch',
     payload: {
-        nickname: string,
-        from: number,
         to: number
     }
 }
@@ -46,8 +44,9 @@ export function handleWSS(server: http.Server) {
         const room = rooms.get(room_id);
         if (!room)
             return;
-        room.in_game.push({ ws: ws, nickname: undefined });
-        sendAllTeams(room.in_game, room.teams);
+        const player = { ws: ws, nickname: undefined }
+        room.in_game.push(player);
+        sendAllTeams(ws, room.teams);
 
         ws.on('close', () => {
             console.log(`A user disconnected from ${room_id}: ${req.socket.remoteAddress}`);
@@ -62,7 +61,7 @@ export function handleWSS(server: http.Server) {
                     room.in_game = room.in_game.map((x) => {
                         if (x.ws === ws)
                             x.nickname = data.payload.nickname;
-                        return x;
+                        return x; 
                     });
                     updateRelevantConnections(room.in_game);
                     break;
@@ -70,6 +69,30 @@ export function handleWSS(server: http.Server) {
                     if (data.payload.type === 'add' && room.teams.length < 8) {
                         addTeam(room.in_game, room.teams);
                     }
+                    break;
+                case 'playerteamswitch':
+                    const player = room.in_game.find(x => x.ws === ws);
+                    if (player === undefined) {
+                        return;
+                    }
+                    let from = 0;
+                    let id = room.in_game.findIndex(x => x.ws === player.ws);
+                    room.teams = room.teams.map((x, index) => {
+                        return { ...x, inside: x.inside.filter(y => {
+                            if (y.ws === player.ws)
+                                from = index;
+                            return y.ws !== player.ws;
+                        }) };
+                    });
+                    room.teams[data.payload.to].inside.push(player);
+                    room.in_game.forEach(x => x.ws.send(JSON.stringify({
+                        type: 'playerswitchedteam',
+                        payload: {
+                            id: id,
+                            from: from,
+                            to: data.payload.to
+                        }
+                    })))
                     break;
             }
         })

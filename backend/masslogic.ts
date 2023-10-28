@@ -1,10 +1,11 @@
-import { Player, RoomProps, Team } from "./dao/rooms";
+import { WebSocket } from "ws";
+import { Player, Team } from "./dao/rooms";
 
-export const updateRelevantConnections = (arr: Player[]) => {
-    const sentData = arr.map((el, index) => (
-        { id: index, nickname: el.nickname, teamNO: -1 }
+export const updateRelevantConnections = (players: Player[]) => {
+    const sentData = players.map((el, index) => (
+        { id: index, nickname: el.nickname, teamNO: 0 }
     )).filter(x => !!x.nickname);
-    arr.forEach((el, index) => (el.ws.send(JSON.stringify({ 
+    players.forEach((el, index) => (el.ws.send(JSON.stringify({ 
         type: 'players',
         payload: {
             players: sentData, 
@@ -32,15 +33,13 @@ export const addTeam = (players: Player[], teams: Team[]) => {
     });
 }
 
-export const sendAllTeams = (players: Player[], teams: Team[]) => {
-    players.forEach(el => {
-        el.ws.send(JSON.stringify({
+export const sendAllTeams = (ws: WebSocket, teams: Team[]) => {
+    ws.send(JSON.stringify({
             type: 'allteams',
             payload: teams.map((x, index) => ({
                 id: index,
                 name: x.name,
                 inside: x.inside.map(y => y.nickname)
             }))
-        }))
-    })
+    }));
 }
